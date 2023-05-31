@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo List</title>
+    <style>
+        ul {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todo List</h1>
+    <input id="todo-input" type="text" placeholder="Add a todo">
+    <button id="add-btn">Add</button>
+    <ul id="todo-list"></ul>
+
+    <script>
+        const todoInput = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+    
+        const baseUrl = 'http://localhost:5000/api/todo'; // Update the base URL
+    
+        function fetchTodos() {
+            fetch(baseUrl)
+                .then(response => response.json())
+                .then(todos => {
+                    todoList.innerHTML = '';
+                    todos.forEach(todo => {
+                        const li = document.createElement('li');
+                        li.textContent = todo;
+                        todoList.appendChild(li);
+                    });
+                })
+                .catch(error => console.log(error));
+        }
+    
+        function addTodo() {
+            const todo = todoInput.value;
+            fetch(baseUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(todo)
+            })
+                .then(response => response.json())
+                .then(todo => {
+                    const li = document.createElement('li');
+                    li.textContent = todo;
+                    todoList.appendChild(li);
+                    todoInput.value = '';
+                })
+                .catch(error => console.log(error));
+        }
+    
+        addBtn.addEventListener('click', addTodo);
+        fetchTodos();
+    </script>
+    
+
+</body>
+</html>
